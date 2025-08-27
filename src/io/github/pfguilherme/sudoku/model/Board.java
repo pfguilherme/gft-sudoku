@@ -1,4 +1,4 @@
-package br.com.dio.model;
+package io.github.pfguilherme.sudoku.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -89,6 +89,11 @@ public class Board
 
     public void reset()
     {
-        cells.forEach();
+        cells.forEach(column -> column.forEach(Cell::clear));
+    }
+
+    public boolean isGameFinished()
+    {
+        return !hasErrors() && getState() == GameState.COMPLETE;
     }
 }

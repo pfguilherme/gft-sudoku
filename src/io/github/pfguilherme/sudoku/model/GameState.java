@@ -1,4 +1,4 @@
-package br.com.dio.model;
+package io.github.pfguilherme.sudoku.model;
 
 public enum GameState
 {
