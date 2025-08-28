@@ -1,6 +1,9 @@
 package io.github.pfguilherme.sudoku.ui.screen;
 
 import io.github.pfguilherme.sudoku.service.BoardService;
+import io.github.pfguilherme.sudoku.service.EventListener;
+import io.github.pfguilherme.sudoku.service.EventType;
+import io.github.pfguilherme.sudoku.service.NotifierService;
 import io.github.pfguilherme.sudoku.ui.button.*;
 import io.github.pfguilherme.sudoku.ui.frame.MainFrame;
 import io.github.pfguilherme.sudoku.ui.panel.BoardPanel;
@@ -10,19 +13,24 @@ import io.github.pfguilherme.sudoku.ui.panel.NumberSelectorsPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class MainScreen
 {
     private static final Dimension MAIN_FRAME_DIMENSION = new Dimension(800, 800);
     private static final Dimension BOARD_PANEL_DIMENSION = new Dimension(500, 500);
+    private static final Dimension NUMBER_SELECTORS_PANEL_DIMENSION = new Dimension(500, 50);
+    private static final Dimension GAME_STATE_BUTTONS_PANEL_DIMENSION = new Dimension(500, 50);
 
     private final BoardService boardService;
+    private final NotifierService notifierService;
 
     private Integer selectedNumber;
 
-    public MainScreen(BoardService boardService)
+    public MainScreen(BoardService boardService, NotifierService notifierService)
     {
         this.boardService = boardService;
+        this.notifierService = notifierService;
     }
 
     public void build()
@@ -36,8 +44,8 @@ public class MainScreen
             boardSize / boardSectorSize
         );
 
-        JPanel numberSelectorsPanel = new NumberSelectorsPanel();
-        JPanel gameStateButtonsPanel = new GameStateButtonsPanel();
+        JPanel numberSelectorsPanel = new NumberSelectorsPanel(NUMBER_SELECTORS_PANEL_DIMENSION);
+        JPanel gameStateButtonsPanel = new GameStateButtonsPanel(GAME_STATE_BUTTONS_PANEL_DIMENSION);
 
         JFrame mainFrame = new MainFrame(
             MAIN_FRAME_DIMENSION,
@@ -67,11 +75,11 @@ public class MainScreen
         mainFrame.repaint();
     }
 
-    private void addBoardSectorPanel(JPanel panel, final int startRow, final int startColumn)
+    private void addBoardSectorPanel(final JPanel panel, final int startRow, final int startColumn)
     {
         int boardSectorSize = BoardService.BOARD_SECTOR_SIZE;
 
-        JPanel boardSectorPanel = new BoardSectorPanel();
+        JPanel boardSectorPanel = new BoardSectorPanel(boardSectorSize);
         for (int row = startRow; row < boardSectorSize + startRow; row++)
         {
             for (int column = startColumn; column < boardSectorSize + startColumn; column++)
@@ -83,9 +91,9 @@ public class MainScreen
         panel.add(boardSectorPanel);
     }
 
-    private void addCellButton(JPanel panel, final int row, final int column)
+    private void addCellButton(final JPanel panel, final int row, final int column)
     {
-        var cell = boardService.getCells().get(row).get(column);
+        var cell = boardService.getCells().get(column).get(row);
         JButton cellButton = new CellButton(cell, e -> {
             var instance = (CellButton) e.getSource();
             if (instance.getCell().isFixed())
@@ -94,33 +102,35 @@ public class MainScreen
             instance.setDisplayNumber(selectedNumber);
             instance.getCell().setActualValue(selectedNumber);
         });
-//        cellButton.addActionListener(e -> {
-//            var instance = (CellButton) e.getSource();
-//            instance.setDisplayNumber(selectedNumber);
-////                selectedNumber = null;
-//        });
 
+        notifierService.subscribe(EventType.CLEAR_CELL, (EventListener) cellButton);
         panel.add(cellButton);
     }
 
-    private void addNumberSelectorButton(JPanel panel, final int number)
+    private void addNumberSelectorButton(final JPanel panel, final int number)
     {
         JButton numberSelectorButton = new NumberSelectorButton(number, e -> {
             var instance = (NumberSelectorButton) e.getSource();
+
+            Arrays.stream(panel.getComponents()).forEach(component -> {
+                var other = ((NumberSelectorButton) component);
+                other.setDown(false);
+                other.revalidate();
+                other.repaint();
+            });
+
+
             if (selectedNumber != null && selectedNumber == instance.getNumber())
+            {
+                instance.setDown(false);
                 selectedNumber = null;
+            }
             else
+            {
+                instance.setDown(true);
                 selectedNumber = instance.getNumber();
+            }
         });
-//        numberSelectorButton.addActionListener(e -> {
-//            if (e.getSource() instanceof NumberSelectorButton instance)
-//            {
-//                if (selectedNumber == null)
-//                    selectedNumber = instance.getNumber();
-//                else if (selectedNumber == instance.getNumber())
-//                    selectedNumber = null;
-//            }
-//        });
 
         panel.add(numberSelectorButton);
     }
@@ -134,7 +144,10 @@ public class MainScreen
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Há algum erro, ou o jogo não foi concluído, tente novamente");
+                JOptionPane.showMessageDialog(
+                    null,
+                    "Há algum erro, ou o jogo não foi concluído. Tente novamente"
+                );
             }
         });
 
@@ -175,6 +188,7 @@ public class MainScreen
             if (dialogResult == 0)
             {
                 boardService.reset();
+                notifierService.notify(EventType.CLEAR_CELL);
             }
         });
 

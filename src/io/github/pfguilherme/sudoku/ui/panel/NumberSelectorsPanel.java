@@ -5,11 +5,9 @@ import java.awt.*;
 
 public class NumberSelectorsPanel extends JPanel
 {
-    public NumberSelectorsPanel()
+    public NumberSelectorsPanel(final Dimension dimension)
     {
-        this.setVisible(true);
-
-        var layout = new FlowLayout();
-        this.setLayout(layout);
+        this.setSize(dimension);
+        this.setPreferredSize(dimension);
     }
 }

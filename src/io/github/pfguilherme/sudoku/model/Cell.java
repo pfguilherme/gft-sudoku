@@ -30,7 +30,6 @@ public class Cell
             || actualValue > BoardService.CELL_MAX_ACTUAL_VALUE)
             return;
 
-        System.out.println(actualValue.toString() + ", " + String.valueOf(correctValue));
         this.actualValue = actualValue;
     }
 

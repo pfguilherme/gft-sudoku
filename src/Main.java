@@ -1,4 +1,5 @@
 import io.github.pfguilherme.sudoku.service.BoardService;
+import io.github.pfguilherme.sudoku.service.NotifierService;
 import io.github.pfguilherme.sudoku.ui.screen.MainScreen;
 
 import java.util.stream.Collectors;
@@ -15,8 +16,9 @@ public class Main
             ));
 
         BoardService boardService = new BoardService(config);
+        NotifierService notifierService = new NotifierService();
 
-        MainScreen mainScreen = new MainScreen(boardService);
+        MainScreen mainScreen = new MainScreen(boardService, notifierService);
         mainScreen.build();
     }
 }
