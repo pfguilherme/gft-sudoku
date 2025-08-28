@@ -6,8 +6,12 @@ import java.awt.event.ActionListener;
 
 public class NumberSelectorButton extends JButton
 {
+    private int number;
+
     public NumberSelectorButton(int number, ActionListener actionListener)
     {
+        this.number = number;
+
         this.setText(String.valueOf(number));
 
         var dimension = new Dimension(50, 50);
@@ -17,5 +21,10 @@ public class NumberSelectorButton extends JButton
         this.setHorizontalAlignment(CENTER);
 
         this.addActionListener(actionListener);
+    }
+
+    public int getNumber()
+    {
+        return number;
     }
 }

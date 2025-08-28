@@ -39,7 +39,7 @@ public class Board
         return cells.stream().flatMap(Collection::stream).anyMatch(
             cell ->
                 nonNull(cell.getActualValue()) &&
-                !cell.getActualValue().equals(cell.getCorrectValue())
+                !cell.isCorrect()
         );
     }
 

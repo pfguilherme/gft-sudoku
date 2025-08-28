@@ -1,5 +1,7 @@
 package io.github.pfguilherme.sudoku.model;
 
+import io.github.pfguilherme.sudoku.service.BoardService;
+
 public class Cell
 {
     private final boolean isFixed;
@@ -24,9 +26,11 @@ public class Cell
 
     public void setActualValue(Integer actualValue)
     {
-        if (isFixed)
+        if (isFixed || actualValue == null || actualValue < BoardService.CELL_MIN_ACTUAL_VALUE
+            || actualValue > BoardService.CELL_MAX_ACTUAL_VALUE)
             return;
 
+        System.out.println(actualValue.toString() + ", " + String.valueOf(correctValue));
         this.actualValue = actualValue;
     }
 
@@ -38,6 +42,11 @@ public class Cell
     public int getCorrectValue()
     {
         return correctValue;
+    }
+
+    public boolean isCorrect()
+    {
+        return actualValue == correctValue;
     }
 
     public void clear()

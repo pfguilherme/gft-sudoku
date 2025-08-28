@@ -9,8 +9,6 @@ public class BoardPanel extends JPanel
     {
         this.setVisible(true);
 
-        // acho que é alguma coisa com o parente dele, ou seja, o mainframe
-//        var dimension = new Dimension(500, 500);
         this.setSize(dimension);
         this.setPreferredSize(dimension);
 

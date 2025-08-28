@@ -1,9 +1,8 @@
-package io.github.pfguilherme.sudoku.ui.frame;
+package io.github.pfguilherme.sudoku.ui.panel;
 
 import javax.swing.*;
 import java.awt.*;
 
-// acho que poderia ser um panel na verdade
 public class NumberSelectorsPanel extends JPanel
 {
     public NumberSelectorsPanel()

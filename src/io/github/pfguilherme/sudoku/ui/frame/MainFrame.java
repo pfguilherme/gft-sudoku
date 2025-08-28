@@ -5,9 +5,8 @@ import java.awt.*;
 
 public class MainFrame extends JFrame
 {
-    // talvez renomear para boardframe
     public MainFrame(final Dimension dimension, final JPanel boardPanel,
-                     final JPanel numberSelectorsPanel)
+                     final JPanel numberSelectorsPanel, final JPanel gameStateButtonsPanel)
     {
         super("Sudoku");
         this.setVisible(true);
@@ -21,5 +20,6 @@ public class MainFrame extends JFrame
 
         this.add(boardPanel);
         this.add(numberSelectorsPanel);
+        this.add(gameStateButtonsPanel);
     }
 }
